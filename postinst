@@ -1,0 +1,68 @@
+#!/bin/bash
+
+echo "Copying files"
+
+rm -r /var/www/html
+mkdir /var/www/html
+cp -r /usr/share/openexternalbuttons/files/html /var/www
+
+echo "Setting up privileges"
+
+chown -R www-data:www-data /var/www/html
+chmod -R og-r /var/www/html
+
+echo "www-data ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
+echo "www-data ALL=NOPASSWD /sbin/reboot" | tee -a /etc/sudoers
+
+echo "[mysqld]" | tee -a /etc/mysql/my.cnf
+echo "skip-grant-tables" | tee -a /etc/mysql/my.cnf
+
+adduser www-data gpio
+adduser www-data netdev
+
+echo "[Allow Wi-Fi management]
+Identity=unix-user:www-data
+Action=org.freedesktop.NetworkManager.*
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes" | tee /etc/polkit-1/localauthority/50-local.d/10-network-manager.pkla
+
+sudo raspi-config nonint do_wifi_country CZ
+
+echo "Preparing database"
+
+mysql -e "CREATE DATABASE openexternalbuttons;"
+
+mysql -e "use openexternalbuttons; CREATE TABLE computers (id int(255) NOT NULL, name text NOT NULL, resetpin int(255) NOT NULL, powerpin int(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;"
+
+mysql -e "use openexternalbuttons; CREATE TABLE loggedusers (id int(255) NOT NULL, username text NOT NULL, userhash text NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;"
+
+mysql -e "use openexternalbuttons; CREATE TABLE users (id int(255) NOT NULL, username text NOT NULL, password text NOT NULL, permissions text NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;"
+
+mysql -e "use openexternalbuttons; INSERT INTO users (id, username, password, permissions) VALUES (1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Administrator'), (2, 'user', 'e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446', 'User');"
+
+mysql -e "use openexternalbuttons; ALTER TABLE computers ADD PRIMARY KEY (id);"
+
+mysql -e "use openexternalbuttons; ALTER TABLE loggedusers ADD PRIMARY KEY (id);"
+
+mysql -e "use openexternalbuttons; ALTER TABLE users ADD PRIMARY KEY (id);"
+
+mysql -e "use openexternalbuttons; ALTER TABLE computers MODIFY id int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;"
+
+mysql -e "use openexternalbuttons; ALTER TABLE loggedusers MODIFY id int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;"
+
+mysql -e "use openexternalbuttons; ALTER TABLE users MODIFY id int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;"
+
+mysql -e "use openexternalbuttons; COMMIT;"
+
+
+
+echo Restarting services
+
+systemctl restart polkit
+
+systemctl restart mysqld
+
+systemctl restart apache2
+
+
