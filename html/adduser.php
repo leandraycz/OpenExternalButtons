@@ -5,11 +5,13 @@
 
         $loggedusername = mysqli_fetch_array(mysqli_query($conn, "SELECT username FROM loggedusers WHERE userhash = '$userhash'"))["username"];
         if(mysqli_fetch_array(mysqli_query($conn, "SELECT permissions FROM users WHERE username = '$loggedusername'"))["permissions"] != "Administrator") {
-            die("Pro přístup musíte být přihlášen jako administrátor");
+            print("Pro přístup musíte být přihlášen jako administrátor");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
-            die("Pro přístup je nutné se přihlásit");
+            print("Pro přístup je nutné se přihlásit");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
         if(isset($_POST["addsubmit"])){
@@ -21,19 +23,16 @@
             if($password == $repeatpassword){
                 $hashedpassword = hash('sha256', $password);
                 mysqli_query($conn, "INSERT INTO users (`id`, `username`, `password`, `permissions`) VALUES (NULL, '$username', '$hashedpassword', '$permission')");
-
                 header("Location: users.php");
-
             }
             else{
-                print("Hesla se neshodují");
+                echo '<script>alert("Hesla se musejí shodovat");</script>';
             }
-
         }
-
     }
     else{
-        die("Pro přístup je nutné se přihlásit");
+        print("Pro přístup je nutné se přihlásit");
+        die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
 ?>
 <!DOCTYPE html>
@@ -65,15 +64,15 @@
                         <th>Heslo znovu</th>
                     </tr>
                     <tr>                    
-                        <td><input type="text" name="username"></td>
+                        <td><input type="text" name="username" required></td>
                         <td>
                             <select name="permission">
                                 <option value="Administrator">Administrator</option>
                                 <option value="User">User</option>
                             </select>    
                         </td>   
-                        <td><input type="password" name="password"></td>
-                        <td><input type="password" name="repeatpassword"></td> 
+                        <td><input type="password" name="password" required></td>
+                        <td><input type="password" name="repeatpassword" required></td> 
                     </tr>
                 </table>
                 <hr>

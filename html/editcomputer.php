@@ -5,11 +5,14 @@
 
         $loggedusername = mysqli_fetch_array(mysqli_query($conn, "SELECT username FROM loggedusers WHERE userhash = '$userhash'"))["username"];
         if(mysqli_fetch_array(mysqli_query($conn, "SELECT permissions FROM users WHERE username = '$loggedusername'"))["permissions"] != "Administrator") {
-            die("Pro přístup musíte být přihlášen jako administrátor");
+            print("Pro přístup musíte být přihlášen jako administrátor");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
-            die("Pro přístup je nutné se přihlásit");
+            print("Pro přístup je nutné se přihlásit");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
+
         }
         if(isset($_POST["submit"])){  
             $computerid = ($_POST["id"]);
@@ -21,7 +24,8 @@
         }
     }
     else{
-        die("Pro přístup je nutné se přihlásit");
+        print("Pro přístup je nutné se přihlásit");
+        die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
 ?>
 <!DOCTYPE html>
@@ -58,13 +62,13 @@
                 print("</tr>");
                 print("<tr>");
                 print("<td><p>".$computers_assoc["id"]."</p></td>");
-                print('<td><input type="text" name="name" value="'.$computers_assoc["name"].'" ></td>');
+                print('<td><input type="text" name="name" value="'.$computers_assoc["name"].'" required></td>');
                 print('<td>');
                 print('<select name="powerpin">');
                 for($i = 0; $i <= 27; $i++){
                     print('<option value="'.$i.'"');
                     if($computers_assoc["powerpin"] == $i){print("selected");} 
-                    print('>'.$i.'</option>');
+                    print(' required>'.$i.'</option>');
                 }
                 print('</select>');
                 print("</td>");
@@ -73,7 +77,7 @@
                 for($i = 0; $i <= 27; $i++){
                     print('<option value="'.$i.'"');
                     if($computers_assoc["resetpin"] == $i){print("selected");} 
-                    print('>'.$i.'</option>');
+                    print(' required>'.$i.'</option>');
                 }
                 print('</select>');
                 print("</td>");

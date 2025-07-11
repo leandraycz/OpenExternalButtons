@@ -4,15 +4,17 @@
         $userhash = $_COOKIE["userhash"];
 
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
-            die("Pro přístup je nutné se přihlásit");
+            print("Pro přístup je nutné se přihlásit");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
-        foreach($_POST as $name => $content) { // Most people refer to $key => $value
+        foreach($_POST as $name => $content) {
             shell_exec("./main -pr ". $name);
         }
         header("Location: home.php"); 
     }
     else{
-        die("Pro přístup je nutné se přihlásit");
+        print("Pro přístup je nutné se přihlásit");
+        die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
 ?>

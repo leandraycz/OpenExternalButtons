@@ -5,11 +5,13 @@
 
         $loggedusername = mysqli_fetch_array(mysqli_query($conn, "SELECT username FROM loggedusers WHERE userhash = '$userhash'"))["username"];
         if(mysqli_fetch_array(mysqli_query($conn, "SELECT permissions FROM users WHERE username = '$loggedusername'"))["permissions"] != "Administrator") {
-            die("Pro přístup musíte být přihlášen jako administrátor");
+            print("Pro přístup musíte být přihlášen jako administrátor");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
-            die("Pro přístup je nutné se přihlásit");
+            print("Pro přístup je nutné se přihlásit");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
         if(isset($_POST["submit"])){
@@ -17,33 +19,21 @@
             $username = $_POST["username"];
             $userpermission = $_POST["userpermission"];
             $password = $_POST["password"];
-            $repeatedpasword = $_POST["repeatpassword"];
+            $repeatedpassword = $_POST["repeatpassword"];
 
-            if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'Administrator'")) != 1 and mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'User'")) != 1){
-                if($password == $repeatedpasword){
-                    $hashedpassword = hash('sha256', $password);
-
-                    mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword', permissions = '$userpermission' WHERE id = '$id'");
-                }
-                else{
-                    print("Heslo se neshoduje");
-                }
+            if($password == $repeatedpassword){
+                $hashedpassword = hash('sha256', $password);
+                mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword', permissions = '$userpermission' WHERE id = '$id'");
+                header("Location: users.php");
             }
             else{
-                if($password == $repeatedpasword){
-                    $hashedpassword = hash('sha256', $password);
-                    mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword' WHERE id = '$id'");
-                }
-                else{
-                    print("Heslo se neshoduje");
-                }
+                echo '<script>alert("Hesla se musejí shodovat");</script>';
             }
-
-            header("Location: users.php");
         }
     }
     else{
-        die("Pro přístup je nutné se přihlásit");
+        print("Pro přístup je nutné se přihlásit");
+        die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
 ?>
 <!DOCTYPE html>

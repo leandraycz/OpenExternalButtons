@@ -18,20 +18,21 @@
             header("Location: home.php");
         }
         else{
-            print("Špatné jméno nebo heslo");
+            echo '<script>alert("Špatné uživatelské jméno nebo heslo");</script>';
         }
     }
 ?>
 <!DOCTYPE html>
 <html>
     <head>
-    <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css">
     </head>
-    <body>
+    <body>  
         <div class="toppanel">
             <h1>Open External Buttons</h1>
         </div>
         <div class="loginscreen">
+            <h1>Přihlásit se</h1>
             <form action="index.php" method="post">
                 <input type="text" placeholder="Uživatelské jméno" name="username" required>
                 <br>

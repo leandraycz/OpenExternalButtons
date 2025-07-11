@@ -12,11 +12,13 @@
         }
 
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
-            die("Pro přístup je nutné se přihlásit");
+            print("Pro přístup je nutné se přihlásit");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
     }
     else{
-        die("Pro přístup je nutné se přihlásit");
+        print("Pro přístup je nutné se přihlásit");
+        die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
 ?>
 <!DOCTYPE html>

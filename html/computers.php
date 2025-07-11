@@ -5,15 +5,18 @@
 
         $loggedusername = mysqli_fetch_array(mysqli_query($conn, "SELECT username FROM loggedusers WHERE userhash = '$userhash'"))["username"];
         if(mysqli_fetch_array(mysqli_query($conn, "SELECT permissions FROM users WHERE username = '$loggedusername'"))["permissions"] != "Administrator") {
-            die("Pro přístup musíte být přihlášen jako administrátor");
+            print("Pro přístup musíte být přihlášen jako administrátor");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
-            die("Pro přístup je nutné se přihlásit");
+            print("Pro přístup je nutné se přihlásit");
+            die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
     }
     else{
-        die("Pro přístup je nutné se přihlásit");
+        print("Pro přístup je nutné se přihlásit");
+        die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
 ?>
 <!DOCTYPE html>
@@ -42,9 +45,6 @@
                     <th>Jméno</th>
                     <th>Power pin</th>
                     <th>Reset pin</th>
-                    <th>Power button</th>
-                    <th>Power button</th>
-                    <th>Reset button</th>
                     <th>Upravit</th>
                     <th>Smazat</th>
                 </tr>
@@ -56,9 +56,6 @@
                         print("<td><p>" . $computername["name"] . "</p></td>");
                         print("<td><p>" . $computername["powerpin"] . "</p></td>");
                         print("<td><p>" . $computername["resetpin"] . "</p></td>");
-                        print('<td><form action="powerbuttonpress.php" method="post"><input type="submit" name="'.$computername["name"].'" value="Stisknout"></form></td>');
-                        print('<td><form action="powerbuttonhold.php" method="post"><input type="submit" name="'.$computername["name"].'" value="Podržet"></form></td>');
-                        print('<td><form action="resetbuttonpress.php" method="post"><input type="submit" name="'.$computername["name"].'" value="Stisknout"></form></td>');
                         print('<td><form action="editcomputer.php" method="post"><input type="hidden" name="id" value="'.$computername["id"].'"><input type="submit" value="Upravit"></form></td>');
                         print('<td><form action="removecomputer.php" method="post"><input type="hidden" name="id" value="'.$computername["name"].'"><input type="submit" value="Smazat"></form></td>');
                         print("</tr>");

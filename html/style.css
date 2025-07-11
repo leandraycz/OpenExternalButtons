@@ -40,6 +40,11 @@ body{
     margin-right: 20%;
 }
 
+.loginscreen h1{
+    color: white;
+    text-align: center;
+}
+
 .sidebar{
     height: 100%;
     width: 150px;
