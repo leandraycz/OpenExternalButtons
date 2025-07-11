@@ -5,7 +5,7 @@ Jak kompilovat(nutno kompilovat přímo na Raspberry Pi):
 ```sh
 git clone  https://github.com/leandraycz/Open-External-Buttons.git
 cd Open-External-Buttons
-chmod x+ build.sh
+chmod +x build.sh
 chmod 775 postinst
 ./build.sh
 ```
