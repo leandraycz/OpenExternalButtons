@@ -4,7 +4,7 @@ Software pro Raspberry Pi (ARM64) pro vzdálené ovládání počítačů.
 Jak kompilovat(nutno kompilovat přímo na Raspberry Pi):
 ```sh
 git clone  https://github.com/leandraycz/OpenExternalButtons.git
-cd Open-External-Buttons
+cd OpenExternalButtons
 chmod +x build.sh
 chmod 775 postinst
 ./build.sh
