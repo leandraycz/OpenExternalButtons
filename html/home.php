@@ -11,6 +11,21 @@
             $isadmin = false;
         }
 
+        //Stisknutí napájecího tlačítka
+        if(isset($_POST["powerpress"])){
+            shell_exec("oeb --powerpress ". $_POST["powerpressname"]);
+        }
+
+        //Podržení napájecího tlačítka
+        if(isset($_POST["powerhold"])){
+            shell_exec("oeb --powerhold ". $_POST["powerholdname"]);
+        }
+
+        //Stisknutí resetovacího tlačítka
+        if(isset($_POST["resetpress"])){
+            shell_exec("oeb --resetpress ". $_POST["resetpressname"]);
+        }
+
         if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM loggedusers WHERE userhash = '$userhash'")) != 1){
             print("Pro přístup je nutné se přihlásit");
             die('<br><a href="index.php">Zpět na prihlášení</a>');
@@ -62,9 +77,9 @@
                         print("<tr>");
                         foreach($computername as $item){
                             print("<td><p>" . $computername["name"] . "</p></td>");
-                            print('<td><form action="powerbuttonpress.php" method="post"><input type="submit" name="'.$computername["name"].'" value="Stisknout"></form></td>');
-                            print('<td><form action="powerbuttonhold.php" method="post"><input type="submit" name="'.$computername["name"].'" value="Podržet"></form></td>');
-                            print('<td><form action="resetbuttonpress.php" method="post"><input type="submit" name="'.$computername["name"].'" value="Stisknout"></form></td>');
+                            print('<td><form sction="home.php" method="post"><input type="hidden" name="powerpressname" value="' . $computername["name"] . '"><input type="submit" name="powerpress" value="Stisknout"></form></td>');
+                            print('<td><form action="home.php" method="post"><input type="hidden" name="powerholdname" value="' . $computername["name"] . '"><input type="submit" name="powerhold" value="Podržet"></form></td>');
+                            print('<td><form action="home.php" method="post"><input type="hidden" name="resetpressname" value="' . $computername["name"] . '"><input type="submit" name="resetpress" value="Stisknout"></form></td>');
                         }
                         print("</tr>");
                     }

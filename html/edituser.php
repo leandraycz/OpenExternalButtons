@@ -1,5 +1,8 @@
 <?php
     include("database.php");
+    function isValid($str){
+        return preg_match('/^[a-zA-Z0-9]+$/', $str);
+    }
     if(isset($_COOKIE["userhash"])){
         $userhash = $_COOKIE["userhash"];
 
@@ -20,14 +23,40 @@
             $userpermission = $_POST["userpermission"];
             $password = $_POST["password"];
             $repeatedpassword = $_POST["repeatpassword"];
-
-            if($password == $repeatedpassword){
-                $hashedpassword = hash('sha256', $password);
-                mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword', permissions = '$userpermission' WHERE id = '$id'");
-                header("Location: users.php");
-            }
-            else{
-                echo '<script>alert("Hesla se musejí shodovat");</script>';
+            if(isValid($username)){
+                if($password == $repeatedpassword){
+                    if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'Administrator'")) == 1 or mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'User'")) == 1){
+                        if($username == mysqli_fetch_array(mysqli_query($conn, "SELECT username FROM users WHERE id = '$id'"))["username"]){
+                            if($userpermission == mysqli_fetch_array(mysqli_query($conn, "SELECT permissions FROM users WHERE id = '$id'"))["permissions"]){
+                                $hashedpassword = hash('sha256', $password);
+                                mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword', permissions = '$userpermission' WHERE id = '$id'");
+                                header("Location: users.php");
+                            } else {
+                                if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'Administrator'")) == 1 or mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'User'")) == 1){
+                                    echo '<script>alert("Nelze upravit oprávnění! Pravděpodobně se v databázi nacházi pouze jeden administrátor nebo uživatel.");</script>';
+                                } else {
+                                    $hashedpassword = hash('sha256', $password);
+                                    mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword', permissions = '$userpermission' WHERE id = '$id'");
+                                    header("Location: users.php");
+                                }
+                            }
+                        } else {
+                            if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE username = '$username'")) == 1){
+                                echo '<script>alert("Uživatel s tímto jménem již existuje.");</script>';
+                            } else {
+                                $hashedpassword = hash('sha256', $password);
+                                mysqli_query($conn, "UPDATE users SET username = '$username' , password = '$hashedpassword', permissions = '$userpermission' WHERE id = '$id'");
+                                header("Location: users.php");
+                            }
+                        } 
+                    } else {
+                        echo '<script>alert("Nelze upravit oprávnění! Pravděpodobně se v databázi nacházi pouze jeden administrátor nebo uživatel.");</script>';
+                    }
+                } else {
+                    echo '<script>alert("Hesla se musejí shodovat");</script>';
+                }
+            } else {
+                echo '<script>alert("Název obsahuje nepovolené znaky! Název může obsahovat pouze velká, malá písmena a číslice.");</script>';
             }
         }
     }

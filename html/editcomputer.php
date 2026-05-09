@@ -1,5 +1,8 @@
 <?php
     include("database.php");
+    function isValid($str){
+        return preg_match('/^[a-zA-Zá-žÁ-Ž0-9 ]+$/', $str);
+    }
     if(isset($_COOKIE["userhash"])){
         $userhash = $_COOKIE["userhash"];
 
@@ -17,10 +20,25 @@
         if(isset($_POST["submit"])){  
             $computerid = ($_POST["id"]);
             $newname = $_POST["name"];
-            $newpowerpin = $_POST["powerpin"];
-            $newresetpin = $_POST["resetpin"];
-            mysqli_query($conn, "UPDATE computers SET name = '$newname' , powerpin = '$newpowerpin' , resetpin = '$newresetpin' WHERE id = '$computerid'");
-            header("Location: computers.php");
+            if(isValid($newname)){
+                if($newname == mysqli_fetch_array(mysqli_query($conn, "SELECT name FROM computers WHERE id = '$computerid'"))["name"]){
+                    $newpowerpin = $_POST["powerpin"];
+                    $newresetpin = $_POST["resetpin"];
+                    mysqli_query($conn, "UPDATE computers SET name = '$newname' , powerpin = '$newpowerpin' , resetpin = '$newresetpin' WHERE id = '$computerid'");
+                    header("Location: computers.php");
+                } else {
+                    if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM computers WHERE name = '$newname'")) == 1){
+                        echo '<script>alert("Počítač s tímto názvem již existuje.");</script>';
+                    } else {
+                        $newpowerpin = $_POST["powerpin"];
+                        $newresetpin = $_POST["resetpin"];
+                        mysqli_query($conn, "UPDATE computers SET name = '$newname' , powerpin = '$newpowerpin' , resetpin = '$newresetpin' WHERE id = '$computerid'");
+                        header("Location: computers.php");
+                    }
+                }                
+            } else {
+                echo '<script>alert("Název obsahuje nepovolené znaky! Název může obsahovat pouze velká, malá písmena a číslice.");</script>';
+            }
         }
     }
     else{

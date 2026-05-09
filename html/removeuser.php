@@ -17,11 +17,12 @@
         if(isset($_POST["remsubmit"])){
             $userid = $_POST["id"];
             
-            if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'Administrator'")) == 1 or mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'User'")) == 1){
-                echo '<script>alert("Posledního uživatele či administrátora nelze odstranit"); window.location.href = "users.php";</script>';
-            }
-            else{           
+            if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'Administrator'")) != 1 or mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE permissions = 'User'")) != 1){
                 mysqli_query($conn, "DELETE FROM users WHERE id = '$userid'");
+                header("Location: users.php");
+            }
+            else{                      
+                echo '<script>alert("Posledního uživatele či administrátora nelze odstranit"); window.location.href = "users.php";</script>';
             }
         }
     }

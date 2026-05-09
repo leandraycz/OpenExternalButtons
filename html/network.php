@@ -14,7 +14,7 @@
             die('<br><a href="index.php">Zpět na prihlášení</a>');
         }
 
-	$wifistatus = shell_exec("sudo /usr/bin/nmcli radio wifi");
+	$wifistatus = shell_exec("nmcli radio wifi");
     }
     else{
         print("Pro přístup je nutné se přihlásit");

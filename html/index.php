@@ -13,7 +13,9 @@
         $count = mysqli_num_rows($result);
         if($count == 1){
             $loggedUserHash = bin2hex(random_bytes(10));
-            mysqli_query($conn, "INSERT INTO loggedusers (username, userhash) VALUES ('$username', '$loggedUserHash')");
+            $servertime = getdate();
+            $loggedtime = $servertime["mday"] . "." . $servertime["mon"] . "." . $servertime["year"] . " " . $servertime["hours"] . ":" . $servertime["minutes"] . ":" . $servertime["seconds"];
+            mysqli_query($conn, "INSERT INTO loggedusers (username, userhash, loggedtime) VALUES ('$username', '$loggedUserHash', '$loggedtime')");
             setcookie("userhash", $loggedUserHash);
             header("Location: home.php");
         }

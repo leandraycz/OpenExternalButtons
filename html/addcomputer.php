@@ -1,5 +1,8 @@
 <?php
     include("database.php");
+    function isValid($str){
+        return preg_match('/^[a-zA-Zá-žÁ-Ž0-9 ]+$/', $str);
+    }
     if(isset($_COOKIE["userhash"])){
         $userhash = $_COOKIE["userhash"];
 
@@ -16,10 +19,18 @@
 
         if(isset($_POST["submit"])){
             $name = $_POST["name"];
-            $powerpin = $_POST["powerpin"];
-            $resetpin = $_POST["resetpin"];
-            mysqli_query($conn, "INSERT INTO computers VALUES (NULL, '$name', '$resetpin', '$powerpin')");
-            header("Location: computers.php");
+            if(isValid($name)){
+                if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM computers WHERE name = '$name'")) >= 1){
+                    echo '<script>alert("Počítač s tímto názvem již existuje.");</script>';
+                } else {
+                    $powerpin = $_POST["powerpin"];
+                    $resetpin = $_POST["resetpin"];
+                    mysqli_query($conn, "INSERT INTO computers VALUES (NULL, '$name', '$resetpin', '$powerpin')");
+                    header("Location: computers.php");
+                }
+            } else {
+                echo '<script>alert("Název obsahuje nepovolené znaky! Název může obsahovat pouze velká, malá písmena a číslice.");</script>';
+            }
         }    
     }
     else{

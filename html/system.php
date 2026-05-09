@@ -45,20 +45,27 @@
             <hr>
             <table>
                 <tr>
-                    <td width=50%><p>Verze softwaru: </p></td>
-                    <td width=50%><p>1.0.0.1</p></td>
+                    <td width=50%><p>Verze webového rozhraní: </p></td>
+                    <td width=50%><p>1.0.0.2</p></td>
                 </tr>
                 <tr>
-                    <td width=50%><p>Vývojář: </p></td>
-                    <td width=50%><p>Radim Krejčiřík</p></td>
+                    <td width=50%><p>Verze softwaru: </p></td>
+                    <td width=50%><p><?php print(shell_exec("oeb --ver"));?></p></td>
                 </tr>
                 <tr>
                     <td width=50%><p>Verze operačního systému: </p></td>
                     <td width=50%><p><?php print(php_uname());?></p></td>
-                </tr>        
+                </tr>
+                <tr>
+                    <td width=50%><p>Využivá knihoven: </p></td>
+                    <td width=50%><p>WiringPi</p></td>
+                </tr>  
+                <tr>
+                    <td width=50%><p>Vývojář: </p></td>
+                    <td width=50%><p>Radim Krejčiřík</p></td>
+                </tr>      
             </table> 
-            <hr>
-              
+            <hr>   
         </div>
     </body>       
 </html>

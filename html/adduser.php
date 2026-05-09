@@ -1,5 +1,8 @@
 <?php
     include("database.php");
+    function isValid($str){
+        return preg_match('/^[a-zA-Z0-9]+$/', $str);
+    }
     if(isset($_COOKIE["userhash"])){
         $userhash = $_COOKIE["userhash"];
 
@@ -16,21 +19,27 @@
 
         if(isset($_POST["addsubmit"])){
             $username = $_POST["username"];
-            $permission = $_POST["permission"];
-            $password = $_POST["password"];
-            $repeatpassword = $_POST["repeatpassword"];
+            if(isValid($username)){
+                if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE username = '$username'")) >= 1){
+                    echo '<script>alert("Uživatel s tímto jménem již existuje");</script>';
+                } else {
+                    $permission = $_POST["permission"];
+                    $password = $_POST["password"];
+                    $repeatpassword = $_POST["repeatpassword"];
 
-            if($password == $repeatpassword){
-                $hashedpassword = hash('sha256', $password);
-                mysqli_query($conn, "INSERT INTO users (`id`, `username`, `password`, `permissions`) VALUES (NULL, '$username', '$hashedpassword', '$permission')");
-                header("Location: users.php");
-            }
-            else{
-                echo '<script>alert("Hesla se musejí shodovat");</script>';
+                    if($password == $repeatpassword){
+                        $hashedpassword = hash('sha256', $password);
+                        mysqli_query($conn, "INSERT INTO users (`id`, `username`, `password`, `permissions`) VALUES (NULL, '$username', '$hashedpassword', '$permission')");
+                        header("Location: users.php");
+                    } else {
+                        echo '<script>alert("Hesla se musejí shodovat");</script>';
+                    }
+                }  
+            } else {
+                echo '<script>alert("Název obsahuje nepovolené znaky! Název může obsahovat pouze velká, malá písmena a číslice.");</script>';
             }
         }
-    }
-    else{
+    } else {
         print("Pro přístup je nutné se přihlásit");
         die('<br><a href="index.php">Zpět na prihlášení</a>');
     }
